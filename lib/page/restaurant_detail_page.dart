@@ -49,7 +49,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
             children: [
               const SizedBox(height: spacingSmall),
               Padding(
-                padding: const EdgeInsets.all(spacingRegular),
+                padding: const EdgeInsets.all(spacingSmall),
                 child: Text(
                   widget.data.name,
                   style: Theme.of(context).textTheme.headline5,
@@ -57,7 +57,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
               ),
               const SizedBox(height: spacingSmall),
               Padding(
-                padding: const EdgeInsets.all(spacingRegular),
+                padding: const EdgeInsets.all(spacingSmall),
                 child: RichText(
                   text: TextSpan(
                     children: [
@@ -81,7 +81,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(spacingSmall),
                 child: RichText(
                   text: TextSpan(
                     children: [
@@ -105,10 +105,60 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(spacingSmall),
                 child: Text(
                   widget.data.description,
-                  style: Theme.of(context).textTheme.labelLarge,
+                  style: Theme.of(context).textTheme.bodyText2,
+                ),
+              ),
+              const SizedBox(height: spacingSmall),
+              Padding(
+                padding: const EdgeInsets.all(spacingSmall),
+                child: Text(
+                  "Menu: Food",
+                  style: Theme.of(context).textTheme.headline5,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(spacingSmall),
+                child: MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      final data = widget.data.menus.foods[index];
+                      return _buildListFood(context, data.name);
+                    },
+                    separatorBuilder: (_, __) => const Divider(),
+                    itemCount: widget.data.menus.foods.length,
+                  ),
+                ),
+              ),
+              const SizedBox(height: spacingSmall),
+              Padding(
+                padding: const EdgeInsets.all(spacingSmall),
+                child: Text(
+                  "Menu: Drink",
+                  style: Theme.of(context).textTheme.headline5,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(spacingSmall),
+                child: MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      final data = widget.data.menus.drinks[index];
+                      return _buildListFood(context, data.name);
+                    },
+                    separatorBuilder: (_, __) => const Divider(),
+                    itemCount: widget.data.menus.drinks.length,
+                  ),
                 ),
               ),
             ],
@@ -117,4 +167,6 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
       ),
     );
   }
+
+  Widget _buildListFood<T>(BuildContext context, String data) => Text(data);
 }
