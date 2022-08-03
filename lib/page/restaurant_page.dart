@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:restaurant_flutter/data/models/restaurant.dart';
 import 'package:restaurant_flutter/page/restaurant_detail_page.dart';
 import 'package:restaurant_flutter/utils/image_builder_utils.dart';
+import 'package:restaurant_flutter/utils/styles.dart';
 
 class RestaurantHome extends StatefulWidget {
   static String routeName = "/restaurant_page";
@@ -53,7 +54,7 @@ _buildItemRestaurant(BuildContext context, Restaurant data) {
             data.pictureId,
             height: double.infinity,
             width: double.infinity,
-            fit: BoxFit.fill,
+            fit: BoxFit.cover,
             loadingBuilder: (context, child, loadingProgress) =>
                 (loadingProgress == null)
                     ? child
@@ -69,10 +70,10 @@ _buildItemRestaurant(BuildContext context, Restaurant data) {
             children: [
               Text(
                 data.name,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 34,
-                ),
+                style: Theme.of(context)
+                    .textTheme
+                    .headline4
+                    ?.apply(color: colorWhite),
               ),
               const SizedBox(height: 10),
               RichText(
@@ -93,10 +94,10 @@ _buildItemRestaurant(BuildContext context, Restaurant data) {
                     ),
                     TextSpan(
                       text: data.city,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                      ),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          ?.apply(color: colorWhite),
                     ),
                   ],
                 ),
@@ -120,10 +121,10 @@ _buildItemRestaurant(BuildContext context, Restaurant data) {
                     ),
                     TextSpan(
                       text: data.rating.toString(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                      ),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          ?.apply(color: colorWhite),
                     ),
                   ],
                 ),

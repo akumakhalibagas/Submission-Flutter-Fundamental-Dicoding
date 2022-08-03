@@ -42,78 +42,80 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
             ),
           ];
         },
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Text(
-                widget.data.name,
-                style: Theme.of(context).textTheme.headline5,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    const WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: Icon(
-                        Icons.location_on,
-                        size: 18,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const WidgetSpan(
-                      child: SizedBox(
-                        width: 5,
-                      ),
-                    ),
-                    TextSpan(
-                      text: widget.data.city,
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                  ],
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Text(
+                  widget.data.name,
+                  style: Theme.of(context).textTheme.headline5,
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    const WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: Icon(
-                        Icons.star,
-                        size: 18,
-                        color: Colors.grey,
+              const SizedBox(height: 6),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      const WidgetSpan(
+                        alignment: PlaceholderAlignment.middle,
+                        child: Icon(
+                          Icons.location_on,
+                          size: 18,
+                          color: Colors.grey,
+                        ),
                       ),
-                    ),
-                    const WidgetSpan(
-                      child: SizedBox(
-                        width: 5,
+                      const WidgetSpan(
+                        child: SizedBox(
+                          width: 5,
+                        ),
                       ),
-                    ),
-                    TextSpan(
-                      text: widget.data.rating.toString(),
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                  ],
+                      TextSpan(
+                        text: widget.data.city,
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Text(
-                widget.data.description,
-                style: Theme.of(context).textTheme.labelLarge,
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      const WidgetSpan(
+                        alignment: PlaceholderAlignment.middle,
+                        child: Icon(
+                          Icons.star,
+                          size: 18,
+                          color: Colors.orangeAccent,
+                        ),
+                      ),
+                      const WidgetSpan(
+                        child: SizedBox(
+                          width: 5,
+                        ),
+                      ),
+                      TextSpan(
+                        text: widget.data.rating.toString(),
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Text(
+                  widget.data.description,
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
