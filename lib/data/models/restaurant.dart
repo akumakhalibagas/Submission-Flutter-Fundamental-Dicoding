@@ -16,11 +16,14 @@ class RestaurantResponse {
   factory RestaurantResponse.fromJson(Map<String, dynamic> json) =>
       RestaurantResponse(
         restaurants: List<Restaurant>.from(
-            json["restaurants"].map((x) => Restaurant.fromJson(x))),
+          json["restaurants"].map((x) => Restaurant.fromJson(x)),
+        ),
       );
 
   Map<String, dynamic> toJson() => {
-        "restaurants": List<dynamic>.from(restaurants.map((x) => x.toJson())),
+        "restaurants": List<dynamic>.from(
+          restaurants.map((x) => x.toJson()),
+        ),
       };
 }
 

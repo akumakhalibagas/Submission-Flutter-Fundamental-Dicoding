@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:restaurant_flutter/data/models/restaurant.dart';
 import 'package:restaurant_flutter/page/restaurant_detail_page.dart';
-
-import '../data/models/restaurant.dart';
+import 'package:restaurant_flutter/utils/image_builder_utils.dart';
 
 class RestaurantHome extends StatefulWidget {
   static String routeName = "/restaurant_page";
+
   const RestaurantHome({Key? key}) : super(key: key);
 
   @override
@@ -53,20 +54,11 @@ _buildItemRestaurant(BuildContext context, Restaurant data) {
             height: double.infinity,
             width: double.infinity,
             fit: BoxFit.fill,
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) return child;
-              return SizedBox(
-                height: 300,
-                child: Center(
-                  child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
-                        : null,
-                  ),
-                ),
-              );
-            },
+            loadingBuilder: (context, child, loadingProgress) =>
+                (loadingProgress == null)
+                    ? child
+                    : loadingImageProgress(loadingProgress),
+            errorBuilder: (_, __, stackTrace) => errorImageBuilder(stackTrace),
           ),
         ),
         Positioned(

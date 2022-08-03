@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_flutter/data/models/restaurant.dart';
+import 'package:restaurant_flutter/utils/image_builder_utils.dart';
 
 class RestaurantDetailPage extends StatefulWidget {
   static String routeName = "/restaurant_detail_page";
   final Restaurant data;
+
   const RestaurantDetailPage({Key? key, required this.data}) : super(key: key);
 
   @override
@@ -28,6 +30,12 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                   child: Image.network(
                     widget.data.pictureId,
                     fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) =>
+                        (loadingProgress == null)
+                            ? child
+                            : loadingImageProgress(loadingProgress),
+                    errorBuilder: (_, __, stackTrace) =>
+                        errorImageBuilder(stackTrace),
                   ),
                 ),
               ),
