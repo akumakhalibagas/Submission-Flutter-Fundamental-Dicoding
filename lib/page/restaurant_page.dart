@@ -3,6 +3,7 @@ import 'package:restaurant_flutter/data/models/restaurant.dart';
 import 'package:restaurant_flutter/page/restaurant_detail_page.dart';
 import 'package:restaurant_flutter/utils/dimens.dart';
 import 'package:restaurant_flutter/utils/image_builder_utils.dart';
+import 'package:restaurant_flutter/utils/scroll_behavior.dart';
 import 'package:restaurant_flutter/utils/styles.dart';
 
 class RestaurantHome extends StatefulWidget {
@@ -31,25 +32,13 @@ class _RestaurantHomeState extends State<RestaurantHome> {
           }
           final restaurants = restaurantResponseFromJson(snapshot.data!);
           return (!isPortrait)
-              ? PageView.builder(
-                  itemCount: restaurants.restaurants.length,
-                  itemBuilder: (context, index) {
-                    final data = restaurants.restaurants[index];
-                    return _buildItemRestaurant(context, data);
-                  },
-                )
+              ? _pageBuilder(context, restaurants)
               : SingleChildScrollView(
                   child: Column(
                     children: [
                       AspectRatio(
                         aspectRatio: 16 / 9,
-                        child: PageView.builder(
-                          itemCount: restaurants.restaurants.length,
-                          itemBuilder: (context, index) {
-                            final data = restaurants.restaurants[index];
-                            return _buildItemRestaurant(context, data);
-                          },
-                        ),
+                        child: _pageBuilder(context, restaurants)
                       ),
                       MediaQuery.removePadding(
                         context: context,
@@ -75,6 +64,16 @@ class _RestaurantHomeState extends State<RestaurantHome> {
       ),
     );
   }
+
+  _pageBuilder(BuildContext context, RestaurantResponse restaurants) =>
+      PageView.builder(
+        scrollBehavior: CustomScrollBehavior(),
+        itemCount: restaurants.restaurants.length,
+        itemBuilder: (context, index) {
+          final data = restaurants.restaurants[index];
+          return _buildItemRestaurant(context, data);
+        },
+      );
 }
 
 _buildItemRestaurant(BuildContext context, Restaurant data) {
@@ -85,19 +84,16 @@ _buildItemRestaurant(BuildContext context, Restaurant data) {
     },
     child: Stack(
       children: [
-        Hero(
-          tag: data.pictureId,
-          child: Image.network(
-            data.pictureId,
-            height: double.infinity,
-            width: double.infinity,
-            fit: BoxFit.cover,
-            loadingBuilder: (context, child, loadingProgress) =>
-                (loadingProgress == null)
-                    ? child
-                    : loadingImageProgress(loadingProgress),
-            errorBuilder: (_, __, stackTrace) => errorImageBuilder(stackTrace),
-          ),
+        Image.network(
+          data.pictureId,
+          height: double.infinity,
+          width: double.infinity,
+          fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) =>
+              (loadingProgress == null)
+                  ? child
+                  : loadingImageProgress(loadingProgress),
+          errorBuilder: (_, __, stackTrace) => errorImageBuilder(stackTrace),
         ),
         Positioned(
           left: 20,
@@ -183,8 +179,7 @@ _buildListRestaurants(BuildContext context, Restaurant data) => InkWell(
                 child: Image(
                   fit: BoxFit.cover,
                   image: NetworkImage(data.pictureId),
-                  errorBuilder: (_, __, ___) =>
-                      const Text('Failed load image.'),
+                  errorBuilder: (_, __, stackTrace) => errorImageBuilder(stackTrace),
                   loadingBuilder:
                       (_, Widget child, ImageChunkEvent? chunkEvent) =>
                           (chunkEvent == null)
