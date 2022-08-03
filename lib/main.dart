@@ -24,8 +24,8 @@ class MyApp extends StatelessWidget {
             onPrimary: colorWhite,
             secondary: colorSecondary),
         appBarTheme: Theme.of(context).appBarTheme.copyWith(
-            systemOverlayStyle: SystemUiOverlayStyle.light,
-        ),
+              systemOverlayStyle: SystemUiOverlayStyle.light,
+            ),
         textTheme: myTextTheme,
       ),
     );

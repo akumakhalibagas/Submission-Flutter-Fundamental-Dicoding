@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_flutter/data/models/restaurant.dart';
+import 'package:restaurant_flutter/utils/dimens.dart';
 import 'package:restaurant_flutter/utils/image_builder_utils.dart';
 
 class RestaurantDetailPage extends StatefulWidget {
@@ -46,17 +47,17 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 12),
+              const SizedBox(height: spacingSmall),
               Padding(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(spacingRegular),
                 child: Text(
                   widget.data.name,
                   style: Theme.of(context).textTheme.headline5,
                 ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: spacingSmall),
               Padding(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(spacingRegular),
                 child: RichText(
                   text: TextSpan(
                     children: [
@@ -69,9 +70,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                         ),
                       ),
                       const WidgetSpan(
-                        child: SizedBox(
-                          width: 5,
-                        ),
+                        child: SizedBox(width: spacingTiny),
                       ),
                       TextSpan(
                         text: widget.data.city,
@@ -95,9 +94,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                         ),
                       ),
                       const WidgetSpan(
-                        child: SizedBox(
-                          width: 5,
-                        ),
+                        child: SizedBox(width: spacingTiny),
                       ),
                       TextSpan(
                         text: widget.data.rating.toString(),
