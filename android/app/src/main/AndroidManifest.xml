@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.restaurant_flutter">
+    
    <application
         android:label="restaurant_flutter"
         android:name="${applicationName}"

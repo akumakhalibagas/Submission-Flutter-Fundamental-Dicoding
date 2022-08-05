@@ -29,7 +29,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                 background: Hero(
                   tag: widget.data.pictureId,
                   child: Image.network(
-                    widget.data.pictureId,
+                    "https://restaurant-api.dicoding.dev/images/small/${widget.data.pictureId}",
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, loadingProgress) =>
                         (loadingProgress == null)
@@ -111,62 +111,10 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                   style: Theme.of(context).textTheme.bodyText2,
                 ),
               ),
-              const SizedBox(height: spacingSmall),
-              Padding(
-                padding: const EdgeInsets.all(spacingSmall),
-                child: Text(
-                  "Menu: Food",
-                  style: Theme.of(context).textTheme.headline5,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(spacingSmall),
-                child: MediaQuery.removePadding(
-                  context: context,
-                  removeTop: true,
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      final data = widget.data.menus.foods[index];
-                      return _buildListFood(context, data.name);
-                    },
-                    separatorBuilder: (_, __) => const Divider(),
-                    itemCount: widget.data.menus.foods.length,
-                  ),
-                ),
-              ),
-              const SizedBox(height: spacingSmall),
-              Padding(
-                padding: const EdgeInsets.all(spacingSmall),
-                child: Text(
-                  "Menu: Drink",
-                  style: Theme.of(context).textTheme.headline5,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(spacingSmall),
-                child: MediaQuery.removePadding(
-                  context: context,
-                  removeTop: true,
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      final data = widget.data.menus.drinks[index];
-                      return _buildListFood(context, data.name);
-                    },
-                    separatorBuilder: (_, __) => const Divider(),
-                    itemCount: widget.data.menus.drinks.length,
-                  ),
-                ),
-              ),
             ],
           ),
         ),
       ),
     );
   }
-
-  Widget _buildListFood<T>(BuildContext context, String data) => Text(data);
 }

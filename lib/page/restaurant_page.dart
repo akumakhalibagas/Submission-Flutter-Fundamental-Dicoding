@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:restaurant_flutter/data/models/restaurant.dart';
 import 'package:restaurant_flutter/page/restaurant_detail_page.dart';
+import 'package:restaurant_flutter/provider/restaurant_provider.dart';
 import 'package:restaurant_flutter/utils/dimens.dart';
 import 'package:restaurant_flutter/utils/image_builder_utils.dart';
 import 'package:restaurant_flutter/utils/scroll_behavior.dart';
 import 'package:restaurant_flutter/utils/styles.dart';
+
+import '../data/api/api_service.dart';
 
 class RestaurantHome extends StatefulWidget {
   static String routeName = "/restaurant_page";
@@ -19,48 +23,71 @@ class _RestaurantHomeState extends State<RestaurantHome> {
   @override
   Widget build(BuildContext context) {
     var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
-
     return Scaffold(
-      body: FutureBuilder<String>(
-        future:
-            DefaultAssetBundle.of(context).loadString('assets/restaurant.json'),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-              child: Text('Terjadi Kesalahan'),
-            );
-          }
-          final restaurants = restaurantResponseFromJson(snapshot.data!);
-          return (!isPortrait)
-              ? _pageBuilder(context, restaurants)
-              : SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      AspectRatio(
-                        aspectRatio: 16 / 9,
-                        child: _pageBuilder(context, restaurants)
-                      ),
-                      MediaQuery.removePadding(
-                        context: context,
-                        removeTop: true,
-                        child: Container(
-                          padding: const EdgeInsets.all(spacingSmall),
-                          child: ListView.separated(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              final data = restaurants.restaurants[index];
-                              return _buildListRestaurants(context, data);
-                            },
-                            separatorBuilder: (_, __) => const Divider(),
-                            itemCount: restaurants.restaurants.length,
-                          ),
+      body: ChangeNotifierProvider<RestaurantProvider>(
+        create: (_) => RestaurantProvider(apiService: ApiService()),
+        child: Consumer<RestaurantProvider>(
+          builder: (context, value, _) {
+            if (value.state == ResultState.hasData) {
+              return (!isPortrait)
+                  ? Scaffold(
+                      body: _pageBuilder(context, value.result),
+                    )
+                  : Scaffold(
+                      body: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            AspectRatio(
+                              aspectRatio: 16 / 9,
+                              child: _pageBuilder(context, value.result),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(spacingSmall),
+                              child: TextFormField(
+                                onChanged: (value) {},
+                                decoration: const InputDecoration(
+                                  hintText: "Cari Restaurant",
+                                  hintStyle: TextStyle(
+                                    fontSize: 13,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(8),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            MediaQuery.removePadding(
+                              context: context,
+                              removeTop: true,
+                              child: Container(
+                                padding: const EdgeInsets.all(spacingSmall),
+                                child: ListView.separated(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    final data =
+                                        value.result.restaurants[index];
+                                    return _buildListRestaurants(context, data);
+                                  },
+                                  separatorBuilder: (_, __) => const Divider(),
+                                  itemCount: value.result.restaurants.length,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                );
-        },
+                    );
+            } else if (value.state == ResultState.loading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return const Center(child: Text(''));
+          },
+        ),
       ),
     );
   }
@@ -85,7 +112,7 @@ _buildItemRestaurant(BuildContext context, Restaurant data) {
     child: Stack(
       children: [
         Image.network(
-          data.pictureId,
+          "https://restaurant-api.dicoding.dev/images/small/${data.pictureId}",
           height: double.infinity,
           width: double.infinity,
           fit: BoxFit.cover,
@@ -178,8 +205,11 @@ _buildListRestaurants(BuildContext context, Restaurant data) => InkWell(
                 tag: data.pictureId,
                 child: Image(
                   fit: BoxFit.cover,
-                  image: NetworkImage(data.pictureId),
-                  errorBuilder: (_, __, stackTrace) => errorImageBuilder(stackTrace),
+                  image: NetworkImage(
+                    "https://restaurant-api.dicoding.dev/images/small/${data.pictureId}",
+                  ),
+                  errorBuilder: (_, __, stackTrace) =>
+                      errorImageBuilder(stackTrace),
                   loadingBuilder:
                       (_, Widget child, ImageChunkEvent? chunkEvent) =>
                           (chunkEvent == null)
