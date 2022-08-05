@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:restaurant_flutter/data/api/api_service.dart';
 import 'package:restaurant_flutter/data/models/restaurants_result.dart';
 import 'package:restaurant_flutter/utils/dimens.dart';
-import 'package:restaurant_flutter/utils/image_builder_utils.dart';
+import 'package:restaurant_flutter/widgets/image_builder_utils.dart';
 
 class RestaurantDetailPage extends StatefulWidget {
   static String routeName = "/restaurant_detail_page";
@@ -30,14 +30,14 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                 background: Hero(
                   tag: widget.data.pictureId,
                   child: Image.network(
-                    ApiService.basImageUrlLarge + widget.data.pictureId,
+                    ApiService.baseImageUrlLarge + widget.data.pictureId,
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, loadingProgress) =>
                         (loadingProgress == null)
                             ? child
-                            : loadingImageProgress(loadingProgress),
+                            : loadingImage(loadingProgress),
                     errorBuilder: (_, __, stackTrace) =>
-                        errorImageBuilder(stackTrace),
+                        errorImage(stackTrace),
                   ),
                 ),
               ),

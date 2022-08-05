@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-loadingImageProgress(ImageChunkEvent chunkEvent) => Center(
+Widget loadingImage(ImageChunkEvent chunkEvent) => Center(
   child: CircularProgressIndicator(
     value: (chunkEvent.expectedTotalBytes != null)
         ? chunkEvent.cumulativeBytesLoaded / chunkEvent.expectedTotalBytes!
@@ -8,7 +8,7 @@ loadingImageProgress(ImageChunkEvent chunkEvent) => Center(
   ),
 );
 
-errorImageBuilder(StackTrace? stackTrace){
+Widget errorImage(StackTrace? stackTrace){
   debugPrintStack(stackTrace: stackTrace);
   return const Center(child: Text("Error mengambil gambar."));
 }

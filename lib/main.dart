@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:restaurant_flutter/data/models/restaurants_result.dart';
-import 'package:restaurant_flutter/page/restaurant_detail_page.dart';
-import 'package:restaurant_flutter/page/restaurant_page.dart';
 import 'package:restaurant_flutter/common/styles.dart';
+import 'package:restaurant_flutter/data/models/restaurants_result.dart';
+import 'package:restaurant_flutter/page/home_page.dart';
+import 'package:restaurant_flutter/page/restaurant_detail_page.dart';
+import 'package:restaurant_flutter/page/restaurant_list_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: RestaurantHome.routeName,
+      initialRoute: HomePage.routeName,
       routes: routes,
       theme: ThemeData(
         colorScheme: Theme.of(context).colorScheme.copyWith(
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
 }
 
 final Map<String, WidgetBuilder> routes = {
-  RestaurantHome.routeName: (context) => const RestaurantHome(),
+  HomePage.routeName: (context) => const HomePage(),
   RestaurantDetailPage.routeName: (context) => RestaurantDetailPage(
       data: ModalRoute.of(context)?.settings.arguments as Restaurant),
 };
