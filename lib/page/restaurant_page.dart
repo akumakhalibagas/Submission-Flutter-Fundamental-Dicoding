@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_flutter/data/models/restaurant.dart';
+import 'package:restaurant_flutter/common/styles.dart';
+import 'package:restaurant_flutter/data/api/api_service.dart';
+import 'package:restaurant_flutter/data/models/restaurants_result.dart';
 import 'package:restaurant_flutter/page/restaurant_detail_page.dart';
 import 'package:restaurant_flutter/utils/dimens.dart';
 import 'package:restaurant_flutter/utils/image_builder_utils.dart';
 import 'package:restaurant_flutter/utils/scroll_behavior.dart';
-import 'package:restaurant_flutter/utils/styles.dart';
 
 class RestaurantHome extends StatefulWidget {
   static String routeName = "/restaurant_page";
@@ -16,29 +17,44 @@ class RestaurantHome extends StatefulWidget {
 }
 
 class _RestaurantHomeState extends State<RestaurantHome> {
+  late Future<RestaurantsResult> _article;
+
+  @override
+  void initState() {
+    super.initState();
+    _article = ApiService().listRestaurants();
+  }
+
   @override
   Widget build(BuildContext context) {
     var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
 
     return Scaffold(
-      body: FutureBuilder<String>(
-        future:
-            DefaultAssetBundle.of(context).loadString('assets/restaurant.json'),
-        builder: (context, snapshot) {
+      body: FutureBuilder<RestaurantsResult>(
+        future: _article,
+        builder: (context,AsyncSnapshot<RestaurantsResult> snapshot) {
+
+          debugPrint(snapshot.toString());
+          // Check connectivity
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          // Check has data
           if (!snapshot.hasData) {
             return const Center(
               child: Text('Terjadi Kesalahan'),
             );
           }
-          final restaurants = restaurantResponseFromJson(snapshot.data!);
+
           return (!isPortrait)
-              ? _pageBuilder(context, restaurants)
+              ? _pageBuilder(context, snapshot.data!.restaurants)
               : SingleChildScrollView(
                   child: Column(
                     children: [
                       AspectRatio(
                         aspectRatio: 16 / 9,
-                        child: _pageBuilder(context, restaurants)
+                        child: _pageBuilder(context, snapshot.data!.restaurants)
                       ),
                       MediaQuery.removePadding(
                         context: context,
@@ -49,11 +65,11 @@ class _RestaurantHomeState extends State<RestaurantHome> {
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
-                              final data = restaurants.restaurants[index];
+                              final data = snapshot.data!.restaurants[index];
                               return _buildListRestaurants(context, data);
                             },
                             separatorBuilder: (_, __) => const Divider(),
-                            itemCount: restaurants.restaurants.length,
+                            itemCount: snapshot.data!.restaurants.length,
                           ),
                         ),
                       ),
@@ -65,12 +81,12 @@ class _RestaurantHomeState extends State<RestaurantHome> {
     );
   }
 
-  _pageBuilder(BuildContext context, RestaurantResponse restaurants) =>
+  _pageBuilder(BuildContext context, List<Restaurant> restaurants) =>
       PageView.builder(
         scrollBehavior: CustomScrollBehavior(),
-        itemCount: restaurants.restaurants.length,
+        itemCount: restaurants.length,
         itemBuilder: (context, index) {
-          final data = restaurants.restaurants[index];
+          final data = restaurants[index];
           return _buildItemRestaurant(context, data);
         },
       );
@@ -85,7 +101,7 @@ _buildItemRestaurant(BuildContext context, Restaurant data) {
     child: Stack(
       children: [
         Image.network(
-          data.pictureId,
+          ApiService.basImageUrlLarge + data.pictureId,
           height: double.infinity,
           width: double.infinity,
           fit: BoxFit.cover,
@@ -178,7 +194,7 @@ _buildListRestaurants(BuildContext context, Restaurant data) => InkWell(
                 tag: data.pictureId,
                 child: Image(
                   fit: BoxFit.cover,
-                  image: NetworkImage(data.pictureId),
+                  image: NetworkImage(ApiService.basImageUrlSmall + data.pictureId),
                   errorBuilder: (_, __, stackTrace) => errorImageBuilder(stackTrace),
                   loadingBuilder:
                       (_, Widget child, ImageChunkEvent? chunkEvent) =>
