@@ -6,28 +6,29 @@ const Color colorSecondary = Color(0xFF8919FA);
 
 const colorBlack = Color(0xFF000000);
 const colorWhite = Color(0xFFF1F2F6);
+const colorGray = Color(0xFFAFAFAF);
 const colorWhiteTransparent50 = Color(0x80F1F2F6);
 const colorTransparent = Color(0x00F1F2F6);
 
 final TextTheme myTextTheme = TextTheme(
   headline4: GoogleFonts.montserrat(
-    fontSize: 32,
+    fontSize: 20,
     fontWeight: FontWeight.w700,
   ),
   headline5: GoogleFonts.montserrat(
-    fontSize: 23,
+    fontSize: 18,
     fontWeight: FontWeight.w700,
   ),
   headline6: GoogleFonts.montserrat(
-    fontSize: 19,
-    fontWeight: FontWeight.w500,
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
   ),
   bodyText1: GoogleFonts.montserrat(
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: FontWeight.w500,
   ),
   bodyText2: GoogleFonts.montserrat(
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: FontWeight.w400,
   ),
   button: GoogleFonts.montserrat(
