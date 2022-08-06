@@ -1,14 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_flutter/data/models/restaurant.dart';
 import 'package:restaurant_flutter/page/restaurant_detail_page.dart';
+import 'package:restaurant_flutter/page/restaurant_list.dart';
+import 'package:restaurant_flutter/page/restaurant_search_page.dart';
 import 'package:restaurant_flutter/provider/restaurant_provider.dart';
 import 'package:restaurant_flutter/utils/dimens.dart';
 import 'package:restaurant_flutter/utils/image_builder_utils.dart';
 import 'package:restaurant_flutter/utils/scroll_behavior.dart';
 import 'package:restaurant_flutter/utils/styles.dart';
-
-import '../data/api/api_service.dart';
 
 class RestaurantHome extends StatefulWidget {
   static String routeName = "/restaurant_page";
@@ -20,70 +22,101 @@ class RestaurantHome extends StatefulWidget {
 }
 
 class _RestaurantHomeState extends State<RestaurantHome> {
+  bool _isConnectionActive = false;
+  Future checkConnection() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        setState(() {
+          _isConnectionActive = true;
+        });
+      }
+    } on SocketException catch (_) {
+      setState(() {
+        _isConnectionActive = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    checkConnection();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
       body: ChangeNotifierProvider<RestaurantProvider>(
-        create: (_) => RestaurantProvider(apiService: ApiService()),
+        create: (_) => RestaurantProvider().getRestaurant(),
         child: Consumer<RestaurantProvider>(
           builder: (context, value, _) {
             if (value.state == ResultState.hasData) {
               return (!isPortrait)
-                  ? Scaffold(
-                      body: _pageBuilder(context, value.result),
-                    )
-                  : Scaffold(
-                      body: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            AspectRatio(
-                              aspectRatio: 16 / 9,
-                              child: _pageBuilder(context, value.result),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(spacingSmall),
-                              child: TextFormField(
-                                onChanged: (value) {},
-                                decoration: const InputDecoration(
-                                  hintText: "Cari Restaurant",
-                                  hintStyle: TextStyle(
-                                    fontSize: 13,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(8),
+                  ? _pageBuilder(context, value.result)
+                  : SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          AspectRatio(
+                            aspectRatio: 16 / 9,
+                            child: _pageBuilder(context, value.result),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(spacingSmall),
+                            child: Consumer<RestaurantProvider>(
+                              builder: (context, value, child) {
+                                return TextFormField(
+                                  onFieldSubmitted: (value) {
+                                    Navigator.pushNamed(
+                                        context, RestaurantSearchPage.routeName,
+                                        arguments: value);
+                                  },
+                                  decoration: const InputDecoration(
+                                    hintText: "Cari Restaurant",
+                                    hintStyle: TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(8),
+                                      ),
                                     ),
                                   ),
-                                ),
+                                );
+                              },
+                            ),
+                          ),
+                          MediaQuery.removePadding(
+                            context: context,
+                            removeTop: true,
+                            child: Container(
+                              padding: const EdgeInsets.all(spacingSmall),
+                              child: ListView.separated(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  final data = value.result.restaurants[index];
+                                  return RestaurantList(data: data);
+                                },
+                                separatorBuilder: (_, __) => const Divider(),
+                                itemCount: value.result.restaurants.length,
                               ),
                             ),
-                            MediaQuery.removePadding(
-                              context: context,
-                              removeTop: true,
-                              child: Container(
-                                padding: const EdgeInsets.all(spacingSmall),
-                                child: ListView.separated(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemBuilder: (context, index) {
-                                    final data =
-                                        value.result.restaurants[index];
-                                    return _buildListRestaurants(context, data);
-                                  },
-                                  separatorBuilder: (_, __) => const Divider(),
-                                  itemCount: value.result.restaurants.length,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     );
             } else if (value.state == ResultState.loading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              if (_isConnectionActive) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                return const Center(
+                  child: Text('Tidak ada koneksi!'),
+                );
+              }
             }
             return const Center(child: Text(''));
           },
@@ -188,54 +221,3 @@ _buildItemRestaurant(BuildContext context, Restaurant data) {
     ),
   );
 }
-
-_buildListRestaurants(BuildContext context, Restaurant data) => InkWell(
-      onTap: () {
-        Navigator.pushNamed(context, RestaurantDetailPage.routeName,
-            arguments: data);
-      },
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 1,
-            child: ClipRRect(
-              borderRadius: radSmall,
-              child: Hero(
-                tag: data.pictureId,
-                child: Image(
-                  fit: BoxFit.cover,
-                  image: NetworkImage(
-                    "https://restaurant-api.dicoding.dev/images/small/${data.pictureId}",
-                  ),
-                  errorBuilder: (_, __, stackTrace) =>
-                      errorImageBuilder(stackTrace),
-                  loadingBuilder:
-                      (_, Widget child, ImageChunkEvent? chunkEvent) =>
-                          (chunkEvent == null)
-                              ? child
-                              : loadingImageProgress(chunkEvent),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: spacingSmaller),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(data.name, style: Theme.of(context).textTheme.headline6),
-                  Text(data.description,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodyText2),
-                ],
-              ),
-            ),
-          )
-        ],
-      ),
-    );

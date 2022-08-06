@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:restaurant_flutter/data/models/restaurant.dart';
 import 'package:restaurant_flutter/page/restaurant_detail_page.dart';
 import 'package:restaurant_flutter/page/restaurant_page.dart';
+import 'package:restaurant_flutter/page/restaurant_search_page.dart';
 import 'package:restaurant_flutter/utils/styles.dart';
 
 void main() {
@@ -36,4 +37,6 @@ final Map<String, WidgetBuilder> routes = {
   RestaurantHome.routeName: (context) => const RestaurantHome(),
   RestaurantDetailPage.routeName: (context) => RestaurantDetailPage(
       data: ModalRoute.of(context)?.settings.arguments as Restaurant),
+  RestaurantSearchPage.routeName: (context) => RestaurantSearchPage(
+      query: ModalRoute.of(context)?.settings.arguments as String),
 };

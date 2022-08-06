@@ -3,8 +3,37 @@ import 'dart:convert';
 RestaurantResponse restaurantResponseFromJson(String str) =>
     RestaurantResponse.fromJson(json.decode(str));
 
+RestaurantResponseSearch restaurantResponseSearchFromJson(String str) =>
+    RestaurantResponseSearch.fromJson(json.decode(str));
+
 String restaurantResponseToJson(RestaurantResponse data) =>
     json.encode(data.toJson());
+
+class RestaurantResponseSearch {
+  RestaurantResponseSearch({
+    required this.error,
+    required this.founded,
+    required this.restaurants,
+  });
+
+  bool error;
+  int founded;
+  List<Restaurant> restaurants;
+
+  factory RestaurantResponseSearch.fromJson(Map<String, dynamic> json) =>
+      RestaurantResponseSearch(
+        error: json["error"],
+        founded: json["founded"],
+        restaurants: List<Restaurant>.from(
+            json["restaurants"].map((x) => Restaurant.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "error": error,
+        "founded": founded,
+        "restaurants": List<dynamic>.from(restaurants.map((x) => x.toJson())),
+      };
+}
 
 class RestaurantResponse {
   RestaurantResponse({
