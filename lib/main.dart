@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:restaurant_flutter/common/styles.dart';
-import 'package:restaurant_flutter/data/models/restaurants_result.dart';
+import 'package:restaurant_flutter/data/models/restaurant.dart';
 import 'package:restaurant_flutter/page/home_page.dart';
 import 'package:restaurant_flutter/page/restaurant_detail_page.dart';
-import 'package:restaurant_flutter/page/restaurant_list_page.dart';
 
 void main() {
   runApp(const MyApp());

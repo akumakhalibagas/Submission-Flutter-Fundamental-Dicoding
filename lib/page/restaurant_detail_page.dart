@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:restaurant_flutter/common/dimens.dart';
 import 'package:restaurant_flutter/data/api/api_service.dart';
-import 'package:restaurant_flutter/data/models/restaurants_result.dart';
-import 'package:restaurant_flutter/utils/dimens.dart';
+import 'package:restaurant_flutter/data/models/restaurant.dart';
 import 'package:restaurant_flutter/widgets/image_builder_utils.dart';
 
 class RestaurantDetailPage extends StatefulWidget {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_flutter/provider/restaurant_provider.dart';
+import 'package:restaurant_flutter/provider/result_state.dart';
 import 'package:restaurant_flutter/widgets/card_restaurants.dart';
 
 class RestaurantListPage extends StatelessWidget {
@@ -13,10 +14,11 @@ class RestaurantListPage extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           } else if (state.state == ResultState.hasData) {
             return ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
-              itemCount: state.result.restaurants.length,
+              itemCount: state.result.length,
               itemBuilder: (context, index) {
-                var restaurant = state.result.restaurants[index];
+                var restaurant = state.result[index];
                 return CardRestaurant(data: restaurant);
               },
             );

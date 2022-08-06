@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:restaurant_flutter/common/dimens.dart';
 import 'package:restaurant_flutter/common/styles.dart';
 import 'package:restaurant_flutter/data/api/api_service.dart';
 import 'package:restaurant_flutter/page/restaurant_list_page.dart';
 import 'package:restaurant_flutter/provider/restaurant_provider.dart';
-import 'package:restaurant_flutter/utils/dimens.dart';
 
 class HomePage extends StatefulWidget {
   static String routeName = "/";
@@ -16,6 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  var provider = RestaurantProvider(apiService: ApiService());
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -30,7 +31,9 @@ class _HomePageState extends State<HomePage> {
                   ),
                   child: TextFormField(
                     onChanged: (query) {
-                      // @todo search based query
+                      query.isNotEmpty
+                          ? provider.fetchSearchRestaurants(query)
+                          : provider.fetchListRestaurants();
                     },
                     decoration: InputDecoration(
                       hintStyle: Theme.of(context).textTheme.bodyText2?.apply(
@@ -46,7 +49,10 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 ChangeNotifierProvider<RestaurantProvider>(
-                  create: (_) => RestaurantProvider(apiService: ApiService()),
+                  create: (_) {
+                    provider.fetchListRestaurants();
+                    return provider;
+                  },
                   child: const RestaurantListPage(),
                 ),
               ],
