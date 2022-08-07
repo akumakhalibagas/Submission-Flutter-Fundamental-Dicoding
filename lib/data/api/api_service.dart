@@ -2,7 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:restaurant_flutter/data/models/Restaurant_search_result.dart';
+import 'package:restaurant_flutter/data/models/restaurant_details_result.dart';
+import 'package:restaurant_flutter/data/models/restaurant_search_result.dart';
 import 'package:restaurant_flutter/data/models/restaurants_result.dart';
 
 class ApiService {
@@ -36,6 +37,19 @@ class ApiService {
       return RestaurantSearchResult.fromJson(json.decode(response.body));
     } else {
       debugPrint('ApiService -> Failed to search restaurants');
+      throw Exception('Failed to search restaurants');
+    }
+  }
+
+  Future<RestaurantDetailsResult> detailsRestaurant(String idRestaurants) async {
+    final uri = Uri.parse("${_baseUrl}detail/$idRestaurants");
+    final response = await http.get(uri);
+    debugPrint(response.statusCode.toString());
+    if (response.statusCode == 200) {
+      debugPrint(response.body.toString());
+      return RestaurantDetailsResult.fromJson(json.decode(response.body));
+    } else {
+      debugPrint('ApiService -> Failed to detailsRestaurant');
       throw Exception('Failed to search restaurants');
     }
   }
