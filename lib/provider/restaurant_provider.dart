@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:restaurant_flutter/data/api/api_service.dart';
@@ -34,6 +35,10 @@ class RestaurantProvider extends ChangeNotifier {
         notifyListeners();
         return _restaurantsResult = response.restaurants;
       }
+    } on SocketException catch (_) {
+      _state = ResultState.error;
+      notifyListeners();
+      return _message = 'Check your internet connectivity';
     } catch (e) {
       _state = ResultState.error;
       notifyListeners();
@@ -55,6 +60,10 @@ class RestaurantProvider extends ChangeNotifier {
         notifyListeners();
         return _restaurantsResult = response.restaurants;
       }
+    } on SocketException catch(_){
+      _state = ResultState.error;
+      notifyListeners();
+      return _message = 'Check your internet connectivity';
     } catch (e) {
       _state = ResultState.error;
       notifyListeners();

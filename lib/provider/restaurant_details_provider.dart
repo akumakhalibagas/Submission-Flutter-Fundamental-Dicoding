@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:restaurant_flutter/data/api/api_service.dart';
@@ -7,9 +8,10 @@ import 'package:restaurant_flutter/provider/result_state.dart';
 
 class RestaurantDetailsProvider extends ChangeNotifier {
   final ApiService apiService;
-  final String idRestaurant ;
+  final String idRestaurant;
 
-  RestaurantDetailsProvider({required this.apiService, required this.idRestaurant}) {
+  RestaurantDetailsProvider(
+      {required this.apiService, required this.idRestaurant}) {
     _fetchDetailRestaurants(idRestaurant);
   }
 
@@ -32,6 +34,10 @@ class RestaurantDetailsProvider extends ChangeNotifier {
       _state = ResultState.hasData;
       notifyListeners();
       return _restaurantsResult = response.restaurant;
+    } on SocketException catch (_) {
+      _state = ResultState.error;
+      notifyListeners();
+      return _message = 'Check your internet connectivity';
     } catch (e) {
       _state = ResultState.error;
       notifyListeners();
