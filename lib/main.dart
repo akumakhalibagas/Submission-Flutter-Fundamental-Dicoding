@@ -1,10 +1,41 @@
+import 'dart:io';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:restaurant_flutter/common/styles.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:provider/provider.dart';
+import 'package:restaurant_flutter/common/navigation.dart';
+import 'package:restaurant_flutter/data/models/restaurant.dart';
 import 'package:restaurant_flutter/page/home_page.dart';
 import 'package:restaurant_flutter/page/restaurant_detail_page.dart';
+import 'package:restaurant_flutter/provider/preferences_provider.dart';
+import 'package:restaurant_flutter/provider/schedule_provider.dart';
+import 'package:restaurant_flutter/utils/background_service.dart';
+import 'package:restaurant_flutter/utils/notification_helper.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+import 'data/preferences/preferences_helper.dart';
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final NotificationHelper notificationHelper = NotificationHelper();
+  final BackgroundService backgroundService = BackgroundService();
+
+  backgroundService.initializeIsolate();
+
+  if (Platform.isAndroid) {
+    await AndroidAlarmManager.initialize();
+  }
+  await notificationHelper.initNotifications(flutterLocalNotificationsPlugin);
+
+  await Hive.initFlutter();
+  Hive.registerAdapter(RestaurantAdapter());
+  await Hive.openBox('Favorites');
+  await Hive.openBox('Themes');
+
   runApp(const MyApp());
 }
 
@@ -13,19 +44,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      initialRoute: HomePage.routeName,
-      routes: routes,
-      theme: ThemeData(
-        colorScheme: Theme.of(context).colorScheme.copyWith(
-            primary: colorPrimary,
-            onPrimary: colorWhite,
-            secondary: colorSecondary),
-        appBarTheme: Theme.of(context).appBarTheme.copyWith(
-              systemOverlayStyle: SystemUiOverlayStyle.light,
-            ),
-        textTheme: myTextTheme,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<SettingsProvider>(
+            create: (_) => SettingsProvider()),
+        ChangeNotifierProvider<PreferencesProvider>(
+            create: (_) => PreferencesProvider(
+                  preferencesHelper: PreferencesHelper(
+                    sharedPreferences: SharedPreferences.getInstance(),
+                  ),
+                )),
+      ],
+      child: Consumer<PreferencesProvider>(
+        builder: (context, provider, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            initialRoute: HomePage.routeName,
+            routes: routes,
+            navigatorKey: navigatorKey,
+            theme: provider.themeData,
+          );
+        },
       ),
     );
   }

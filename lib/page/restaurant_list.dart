@@ -24,21 +24,15 @@ class RestaurantListPage extends StatelessWidget {
             );
           } else if (state.state == ResultState.noData) {
             return Center(
-              child: Material(
-                child: Text(state.message),
-              ),
+              child: Text(state.message),
             );
           } else if (state.state == ResultState.error) {
             return Center(
-              child: Material(
-                child: Text(state.message),
-              ),
+              child: Text(state.message),
             );
           } else {
             return const Center(
-              child: Material(
-                child: Text(''),
-              ),
+              child: Text(''),
             );
           }
         },

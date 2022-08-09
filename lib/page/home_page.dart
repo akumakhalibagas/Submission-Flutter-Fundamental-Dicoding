@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:restaurant_flutter/common/dimens.dart';
-import 'package:restaurant_flutter/common/styles.dart';
-import 'package:restaurant_flutter/data/api/api_service.dart';
-import 'package:restaurant_flutter/page/restaurant_list_page.dart';
-import 'package:restaurant_flutter/provider/restaurant_provider.dart';
+import 'package:restaurant_flutter/page/restaurant_detail_page.dart';
+import 'package:restaurant_flutter/page/restaurant_page.dart';
+import 'package:restaurant_flutter/page/settings_page.dart';
+import 'package:restaurant_flutter/utils/notification_helper.dart';
+
+import 'favorite_page.dart';
 
 class HomePage extends StatefulWidget {
   static String routeName = "/";
-
   const HomePage({Key? key}) : super(key: key);
 
   @override
@@ -16,48 +15,58 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  var provider = RestaurantProvider(apiService: ApiService());
+  int _bottomNavIndex = 0;
+
+  final NotificationHelper _notificationHelper = NotificationHelper();
+  final List<Widget> _widgetList = [
+    const RestaurantPage(),
+    const FavoritePage(),
+    const SettingsPage()
+  ];
+
+  final List<BottomNavigationBarItem> _bottomNavbarItems = const [
+    BottomNavigationBarItem(
+      icon: Icon(Icons.home),
+      label: 'Home',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.favorite),
+      label: 'Favorite',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.settings),
+      label: 'Settings',
+    ),
+  ];
+
+  void _onBottomNavTapped(int i) {
+    setState(() {
+      _bottomNavIndex = i;
+    });
+  }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: spacingSmaller,
-                    horizontal: spacingRegular,
-                  ),
-                  child: TextFormField(
-                    onChanged: (query) {
-                      query.isNotEmpty
-                          ? provider.fetchSearchRestaurants(query)
-                          : provider.fetchListRestaurants();
-                    },
-                    decoration: InputDecoration(
-                      hintStyle: Theme.of(context).textTheme.bodyText2?.apply(
-                            color: colorGray,
-                          ),
-                      hintText: "Cari restaurant yang kamu mau...",
-                      border: const OutlineInputBorder(),
-                      suffixIcon: const Icon(
-                        Icons.search,
-                      ),
-                    ),
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
-                ),
-                ChangeNotifierProvider<RestaurantProvider>(
-                  create: (_) {
-                    provider.fetchListRestaurants();
-                    return provider;
-                  },
-                  child: const RestaurantListPage(),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
+  void initState() {
+    _notificationHelper
+        .configureNotificationSubject(RestaurantDetailPage.routeName);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    selectNotificationSubject.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _widgetList[_bottomNavIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        items: _bottomNavbarItems,
+        currentIndex: _bottomNavIndex,
+        onTap: _onBottomNavTapped,
+      ),
+    );
+  }
 }

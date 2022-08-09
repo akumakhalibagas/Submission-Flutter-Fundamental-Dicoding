@@ -5,9 +5,12 @@ import 'package:restaurant_flutter/common/styles.dart';
 import 'package:restaurant_flutter/data/api/api_service.dart';
 import 'package:restaurant_flutter/data/models/restaurant_details_result.dart';
 import 'package:restaurant_flutter/provider/restaurant_details_provider.dart';
+import 'package:restaurant_flutter/provider/restaurant_provider.dart';
 import 'package:restaurant_flutter/provider/result_state.dart';
 import 'package:restaurant_flutter/utils/scroll_behavior.dart';
 import 'package:restaurant_flutter/widgets/image_builder_utils.dart';
+
+import '../data/database/db_service.dart';
 
 class RestaurantDetailPage extends StatefulWidget {
   static String routeName = "/restaurant_detail_page";
@@ -21,6 +24,8 @@ class RestaurantDetailPage extends StatefulWidget {
 }
 
 class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
+  var provider = RestaurantProvider(
+      databaseService: DatabaseService(), apiService: ApiService());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,21 +47,26 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                       elevation: 0,
                       pinned: true,
                       title: Text(state.result.name),
-                      flexibleSpace: FlexibleSpaceBar(
-                        background: Hero(
-                          tag: state.result.pictureId,
-                          child: Image.network(
-                            ApiService.baseImageUrlLarge +
-                                state.result.pictureId,
-                            fit: BoxFit.cover,
-                            loadingBuilder: (context, child, loadingProgress) =>
-                                (loadingProgress == null)
-                                    ? child
-                                    : loadingImage(loadingProgress),
-                            errorBuilder: (_, __, stackTrace) =>
-                                errorImage(stackTrace),
+                      flexibleSpace: Stack(
+                        children: [
+                          FlexibleSpaceBar(
+                            background: Hero(
+                              tag: state.result.pictureId,
+                              child: Image.network(
+                                ApiService.baseImageUrlLarge +
+                                    state.result.pictureId,
+                                fit: BoxFit.cover,
+                                loadingBuilder: (context, child,
+                                        loadingProgress) =>
+                                    (loadingProgress == null)
+                                        ? child
+                                        : loadingImage(loadingProgress),
+                                errorBuilder: (_, __, stackTrace) =>
+                                    errorImage(stackTrace),
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                   ];

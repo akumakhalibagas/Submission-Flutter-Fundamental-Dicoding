@@ -36,3 +36,6 @@ final TextTheme myTextTheme = TextTheme(
     fontWeight: FontWeight.w500,
   ),
 );
+
+ThemeData lightTheme = ThemeData.light();
+ThemeData darkTheme = ThemeData.dark();
