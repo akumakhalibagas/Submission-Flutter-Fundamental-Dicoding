@@ -19,8 +19,14 @@ void main() {
     "rating": 4.2
   };
   test("Tes Json Parsing", () async {
-    var result = Restaurant.fromJson(data).id;
+    var result = Restaurant.fromJson(data);
 
-    expect(result, "rqdv5juczeskfw1e867");
+    expect(result.id, "rqdv5juczeskfw1e867");
+    expect(result.name, "Melting Pot");
+    expect(result.description,
+        "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. ...");
+    expect(result.pictureId, "14");
+    expect(result.city, "Medan");
+    expect(result.rating, 4.2);
   });
 }

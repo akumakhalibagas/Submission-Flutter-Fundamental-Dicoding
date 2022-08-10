@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:restaurant_flutter/page/restaurant_detail_page.dart';
 import 'package:restaurant_flutter/page/restaurant_page.dart';
 import 'package:restaurant_flutter/page/settings_page.dart';
-import 'package:restaurant_flutter/utils/notification_helper.dart';
+import 'package:restaurant_flutter/utils/service/notification_helper.dart';
 
 import 'favorite_page.dart';
 
@@ -47,8 +47,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    _notificationHelper
-        .configureNotificationSubject(RestaurantDetailPage.routeName);
+    _notificationHelper.configureNotificationSubject(RestaurantDetailPage.routeName);
     super.initState();
   }
 

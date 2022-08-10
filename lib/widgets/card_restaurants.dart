@@ -8,7 +8,6 @@ import 'package:restaurant_flutter/page/restaurant_detail_page.dart';
 import '../common/navigation.dart';
 import '../data/database/db_service.dart';
 import '../provider/restaurant_provider.dart';
-import '../provider/result_state.dart';
 import 'image_builder_utils.dart';
 
 class CardRestaurant extends StatelessWidget {
@@ -51,53 +50,6 @@ class CardRestaurant extends StatelessWidget {
                   ),
                 ),
               ),
-              Consumer<RestaurantProvider>(builder: (context, provider, _) {
-                switch (provider.state) {
-                  case ResultState.loading:
-                    return const Icon(Icons.favorite_outline);
-                  case ResultState.noData:
-                    return IconButton(
-                      icon: const Icon(Icons.favorite_outline,
-                          color: Colors.white),
-                      onPressed: () {
-                        provider.setFavorites(data).then((value) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text("Berhasil menyimpan")));
-                        });
-                      },
-                    );
-                  case ResultState.hasData:
-                    return provider.favorites
-                            .where((element) => element.id == data.id)
-                            .isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.favorite),
-                            color: Colors.red,
-                            onPressed: () {
-                              provider.setFavorites(data).then((value) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text("Berhasil menghapus")));
-                              });
-                            },
-                          )
-                        : IconButton(
-                            icon: const Icon(Icons.favorite_outline,
-                                color: Colors.white),
-                            onPressed: () {
-                              provider.setFavorites(data).then((value) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text("Berhasil menyimpan")));
-                              });
-                            },
-                          );
-                  case ResultState.error:
-                    return const Icon(Icons.favorite_outline,
-                        color: Colors.black87);
-                }
-              }),
             ],
           ),
           title: Text(

@@ -1,7 +1,9 @@
 import 'dart:io';
+
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_flutter/common/navigation.dart';
 import 'package:restaurant_flutter/data/models/restaurant.dart';
@@ -9,9 +11,8 @@ import 'package:restaurant_flutter/page/home_page.dart';
 import 'package:restaurant_flutter/page/restaurant_detail_page.dart';
 import 'package:restaurant_flutter/provider/preferences_provider.dart';
 import 'package:restaurant_flutter/provider/schedule_provider.dart';
-import 'package:restaurant_flutter/utils/background_service.dart';
-import 'package:restaurant_flutter/utils/notification_helper.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:restaurant_flutter/utils/service/background_service.dart';
+import 'package:restaurant_flutter/utils/service/notification_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'data/preferences/preferences_helper.dart';

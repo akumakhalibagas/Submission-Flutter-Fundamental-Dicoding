@@ -26,6 +26,7 @@ class RestaurantDetailPage extends StatefulWidget {
 class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
   var provider = RestaurantProvider(
       databaseService: DatabaseService(), apiService: ApiService());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,27 +48,35 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                       elevation: 0,
                       pinned: true,
                       title: Text(state.result.name),
-                      flexibleSpace: Stack(
-                        children: [
-                          FlexibleSpaceBar(
-                            background: Hero(
-                              tag: state.result.pictureId,
-                              child: Image.network(
-                                ApiService.baseImageUrlLarge +
-                                    state.result.pictureId,
-                                fit: BoxFit.cover,
-                                loadingBuilder: (context, child,
-                                        loadingProgress) =>
-                                    (loadingProgress == null)
-                                        ? child
-                                        : loadingImage(loadingProgress),
-                                errorBuilder: (_, __, stackTrace) =>
-                                    errorImage(stackTrace),
-                              ),
-                            ),
+                      flexibleSpace: FlexibleSpaceBar(
+                        background: Hero(
+                          tag: state.result.pictureId,
+                          child: Image.network(
+                            ApiService.baseImageUrlLarge +
+                                state.result.pictureId,
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, loadingProgress) =>
+                                (loadingProgress == null)
+                                    ? child
+                                    : loadingImage(loadingProgress),
+                            errorBuilder: (_, __, stackTrace) =>
+                                errorImage(stackTrace),
                           ),
-                        ],
+                        ),
                       ),
+                      actions: [
+                        Padding(
+                            padding: const EdgeInsets.all(spacingRegular),
+                            child: InkWell(
+                              onTap: () {
+                                debugPrint("Hello Bitch");
+                              },
+                              child: const Icon(
+                                Icons.favorite,
+                                size: 26.0,
+                              ),
+                            )),
+                      ],
                     ),
                   ];
                 },
@@ -176,7 +185,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                       Padding(
                         padding: const EdgeInsets.all(spacingSmall),
                         child: SizedBox(
-                          height: 40.0,
+                          height: 60.0,
                           child: PageView.builder(
                             scrollBehavior: CustomScrollBehavior(),
                             controller: PageController(
@@ -275,6 +284,10 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
           },
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.reviews_outlined),
+        onPressed: () {},
+      ),
     );
   }
 
@@ -293,7 +306,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
             ],
           ),
           const SizedBox(height: spacingTiny),
-          Text(data.review),
+          Text(data.review, maxLines: 2, overflow: TextOverflow.ellipsis),
         ],
       );
 }

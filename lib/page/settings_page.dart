@@ -42,7 +42,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   trailing: Consumer<SettingsProvider>(
                     builder: (context, provider, child) {
                       return Switch.adaptive(
-                        value: preferences.isDailyNewsActive,
+                        value: preferences.schedulingInfo,
                         onChanged: (value) async {
                           provider.scheduledInfo(value);
                           preferences.enableDailyNews(value);

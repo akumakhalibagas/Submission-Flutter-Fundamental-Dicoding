@@ -1,13 +1,11 @@
 import 'dart:convert';
-import 'dart:math';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:restaurant_flutter/data/models/restaurant.dart';
-import 'package:restaurant_flutter/page/restaurant_detail_page.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../common/navigation.dart';
-import '../data/models/restaurants_result.dart';
+import '../../common/navigation.dart';
 
 final selectNotificationSubject = BehaviorSubject<String>();
 
@@ -37,9 +35,7 @@ class NotificationHelper {
       initializationSettings,
       onSelectNotification: (payload) async {
         if (payload != null) {
-          print('notification payload: $payload');
-          var data = Restaurant.fromJson(json.decode(payload));
-          await Navigation.intentWithData(RestaurantDetailPage.routeName, data);
+          debugPrint('notification payload: $payload');
         }
         selectNotificationSubject.add(payload ?? 'empty payload');
       },
@@ -47,10 +43,9 @@ class NotificationHelper {
   }
 
   Future<void> showNotifications(
-      FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin,
-      RestaurantsResult response) async {
-    var restaurant =
-        response.restaurants[Random().nextInt(response.restaurants.length)];
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin,
+    Restaurant response,
+  ) async {
     var channelId = '1';
     var channelName = 'channel_apps';
     var channelDesc = 'Restaurant Info';
@@ -63,22 +58,29 @@ class NotificationHelper {
         ticker: 'ticker',
         styleInformation: const DefaultStyleInformation(true, true));
 
-    var iOSPlayfromChannelSpesifics = const IOSNotificationDetails();
-    var platformChannelSpesifications = NotificationDetails(
-        android: androidPlatformChannelSpesifics,
-        iOS: iOSPlayfromChannelSpesifics);
+    var iOSPlatformChannelSpecifics = const IOSNotificationDetails();
+    var platformChannelSpecifications = NotificationDetails(
+      android: androidPlatformChannelSpesifics,
+      iOS: iOSPlatformChannelSpecifics,
+    );
 
     var title = "Restaurant Info";
-    var subtitle = "Hallo sahabat ada promo nih di ${restaurant.name}";
+    var subtitle = "Hallo bordii ada promo nih di ${response.name}. Yuk, check sekarang!";
     await flutterLocalNotificationsPlugin.show(
-        0, title, subtitle, platformChannelSpesifications,
-        payload: json.encode(restaurant.toJson()));
+      0, // id
+      title, // title
+      subtitle, // body
+      platformChannelSpecifications,
+      payload: json.encode(
+        response.toJson(),
+      ),
+    );
   }
 
   void configureNotificationSubject(String route) {
     selectNotificationSubject.stream.listen((event) async {
       var data = Restaurant.fromJson(json.decode(event));
-      Navigation.intentWithData(route, data);
+      Navigation.intentWithData(route, data.id);
     });
   }
 }

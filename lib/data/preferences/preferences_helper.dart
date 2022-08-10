@@ -6,7 +6,7 @@ class PreferencesHelper {
   PreferencesHelper({required this.sharedPreferences});
 
   static const darkTheme = 'DARK_THEME';
-  static const dailyNews = 'DAILY_NEWS';
+  static const schedulingInfo = 'SCHEDULING_INFO';
 
   Future<bool> get isDarkTheme async {
     final prefs = await sharedPreferences;
@@ -18,13 +18,13 @@ class PreferencesHelper {
     prefs.setBool(darkTheme, value);
   }
 
-  Future<bool> get isDailyNewsActive async {
+  Future<bool> get isSchedulingActive async {
     final prefs = await sharedPreferences;
-    return prefs.getBool(dailyNews) ?? false;
+    return prefs.getBool(schedulingInfo) ?? false;
   }
 
-  void setDailyNews(bool value) async {
+  void setSchedulingInfo(bool value) async {
     final prefs = await sharedPreferences;
-    prefs.setBool(dailyNews, value);
+    prefs.setBool(schedulingInfo, value);
   }
 }
