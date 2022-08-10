@@ -18,7 +18,10 @@ class RestaurantPage extends StatefulWidget {
 
 class _RestaurantPageState extends State<RestaurantPage> {
   var provider = RestaurantProvider(
-      databaseService: DatabaseService(), apiService: ApiService());
+    databaseService: DatabaseService(),
+    apiService: ApiService(),
+  );
+  final mq = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -53,12 +56,17 @@ class _RestaurantPageState extends State<RestaurantPage> {
                     style: Theme.of(context).textTheme.bodyText2,
                   ),
                 ),
-                ChangeNotifierProvider<RestaurantProvider>(
-                  create: (_) {
-                    provider.fetchListRestaurants();
-                    return provider;
-                  },
-                  child: const RestaurantListPage(),
+                ConstrainedBox(
+                  constraints: BoxConstraints.tightFor(
+                    height: mq.size.height,
+                  ),
+                  child: ChangeNotifierProvider<RestaurantProvider>(
+                    create: (_) {
+                      provider.fetchListRestaurants();
+                      return provider;
+                    },
+                    child: RestaurantListPage(provider: provider,),
+                  ),
                 ),
               ],
             ),

@@ -14,14 +14,15 @@ class RestaurantProvider extends ChangeNotifier {
   RestaurantProvider({required this.databaseService, required this.apiService});
 
   late List<Restaurant> _restaurantsResult;
+  List<Restaurant> get result => _restaurantsResult;
+
   late List<Restaurant> _favoritesResult;
+  List<Restaurant> get favorites => _favoritesResult;
+
   late ResultState _state;
   String _message = '';
 
   String get message => _message;
-
-  List<Restaurant> get result => _restaurantsResult;
-  List<Restaurant> get favorites => _favoritesResult;
 
   ResultState get state => _state;
 

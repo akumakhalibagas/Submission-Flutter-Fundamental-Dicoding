@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:restaurant_flutter/common/dimens.dart';
 import 'package:restaurant_flutter/common/styles.dart';
 import 'package:restaurant_flutter/data/api/api_service.dart';
+import 'package:restaurant_flutter/data/models/restaurant.dart';
 import 'package:restaurant_flutter/data/models/restaurant_details_result.dart';
 import 'package:restaurant_flutter/provider/restaurant_details_provider.dart';
 import 'package:restaurant_flutter/provider/restaurant_provider.dart';
@@ -24,8 +25,10 @@ class RestaurantDetailPage extends StatefulWidget {
 }
 
 class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
-  var provider = RestaurantProvider(
-      databaseService: DatabaseService(), apiService: ApiService());
+  var favProvider = RestaurantProvider(
+    apiService: ApiService(),
+    databaseService: DatabaseService(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +43,15 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
             if (state.state == ResultState.loading) {
               return const Center(child: CircularProgressIndicator());
             } else if (state.state == ResultState.hasData) {
+              var restaurantDetails = state.result;
+              var restaurantData = Restaurant(
+                id: restaurantDetails.id,
+                name: restaurantDetails.name,
+                description: restaurantDetails.description,
+                pictureId: restaurantDetails.pictureId,
+                city: restaurantDetails.city,
+                rating: restaurantDetails.rating,
+              );
               return NestedScrollView(
                 headerSliverBuilder: (context, innerBoxIsScrolled) {
                   return [
@@ -47,13 +59,13 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                       expandedHeight: 200,
                       elevation: 0,
                       pinned: true,
-                      title: Text(state.result.name),
+                      title: Text(restaurantDetails.name),
                       flexibleSpace: FlexibleSpaceBar(
                         background: Hero(
-                          tag: state.result.pictureId,
+                          tag: restaurantDetails.pictureId,
                           child: Image.network(
                             ApiService.baseImageUrlLarge +
-                                state.result.pictureId,
+                                restaurantDetails.pictureId,
                             fit: BoxFit.cover,
                             loadingBuilder: (context, child, loadingProgress) =>
                                 (loadingProgress == null)
@@ -66,16 +78,10 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                       ),
                       actions: [
                         Padding(
-                            padding: const EdgeInsets.all(spacingRegular),
-                            child: InkWell(
-                              onTap: () {
-                                debugPrint("Hello Bitch");
-                              },
-                              child: const Icon(
-                                Icons.favorite,
-                                size: 26.0,
-                              ),
-                            )),
+                          padding: const EdgeInsets.only(right: spacingSmaller),
+                          child:
+                              _buildFavoriteIcon(restaurantData, favProvider),
+                        ),
                       ],
                     ),
                   ];
@@ -89,7 +95,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                       Padding(
                         padding: const EdgeInsets.all(spacingSmall),
                         child: Text(
-                          state.result.name,
+                          restaurantDetails.name,
                           style: Theme.of(context).textTheme.headline5,
                         ),
                       ),
@@ -100,7 +106,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
                             itemBuilder: (context, index) {
-                              final data = state.result.categories[index];
+                              final data = restaurantDetails.categories[index];
                               return Container(
                                   margin: const EdgeInsetsDirectional.only(
                                       end: spacingTiny),
@@ -114,7 +120,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                                           horizontal: spacingRegular),
                                       child: Text(data.name)));
                             },
-                            itemCount: state.result.categories.length,
+                            itemCount: restaurantDetails.categories.length,
                           ),
                         ),
                       ),
@@ -136,7 +142,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                                 child: SizedBox(width: spacingTiny),
                               ),
                               TextSpan(
-                                text: state.result.city,
+                                text: restaurantDetails.city,
                                 style: Theme.of(context).textTheme.bodyText1,
                               ),
                             ],
@@ -160,7 +166,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                                 child: SizedBox(width: spacingTiny),
                               ),
                               TextSpan(
-                                text: state.result.rating.toString(),
+                                text: restaurantDetails.rating.toString(),
                                 style: Theme.of(context).textTheme.bodyText1,
                               ),
                             ],
@@ -170,7 +176,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                       Padding(
                         padding: const EdgeInsets.all(spacingSmall),
                         child: Text(
-                          state.result.description,
+                          restaurantDetails.description,
                           style: Theme.of(context).textTheme.bodyText2,
                         ),
                       ),
@@ -192,9 +198,10 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                               initialPage: 0,
                             ),
                             scrollDirection: Axis.horizontal,
-                            itemCount: state.result.customerReviews.length,
+                            itemCount: restaurantDetails.customerReviews.length,
                             itemBuilder: (BuildContext context, int index) {
-                              var data = state.result.customerReviews[index];
+                              var data =
+                                  restaurantDetails.customerReviews[index];
                               return _itemMoviePagerWidget(data, context);
                             },
                           ),
@@ -222,10 +229,10 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                               crossAxisCount: 2,
                             ),
                             itemBuilder: (context, index) {
-                              final data = state.result.menus.foods[index];
+                              final data = restaurantDetails.menus.foods[index];
                               return _buildListFood(context, data.name);
                             },
-                            itemCount: state.result.menus.foods.length,
+                            itemCount: restaurantDetails.menus.foods.length,
                           ),
                         ),
                       ),
@@ -251,10 +258,11 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                               crossAxisCount: 2,
                             ),
                             itemBuilder: (context, index) {
-                              final data = state.result.menus.drinks[index];
+                              final data =
+                                  restaurantDetails.menus.drinks[index];
                               return _buildListFood(context, data.name);
                             },
-                            itemCount: state.result.menus.drinks.length,
+                            itemCount: restaurantDetails.menus.drinks.length,
                           ),
                         ),
                       ),
@@ -309,4 +317,64 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
           Text(data.review, maxLines: 2, overflow: TextOverflow.ellipsis),
         ],
       );
+
+  _buildFavoriteIcon(
+      Restaurant restaurantData, RestaurantProvider favProvider) {
+    debugPrint("Build Fav Icon");
+    return ChangeNotifierProvider<RestaurantProvider>(
+      create: (_) {
+        favProvider.fetchRestaurantFavorites();
+        return favProvider;
+      },
+      child: Consumer<RestaurantProvider>(
+        builder: (context, _, __) {
+          switch (favProvider.state) {
+            case ResultState.loading:
+              return const Icon(Icons.favorite_outline, size: 26.0);
+            case ResultState.noData:
+              return IconButton(
+                icon: const Icon(Icons.favorite_outline,
+                    size: 26.0, color: Colors.white),
+                onPressed: () {
+                  favProvider.setFavorites(restaurantData).then(
+                    (value) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Berhasil menyimpan")));
+                    },
+                  );
+                },
+              );
+            case ResultState.hasData:
+              return favProvider.favorites
+                      .where((element) => element.id == restaurantData.id)
+                      .isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.favorite, size: 26.0),
+                      color: Colors.red,
+                      onPressed: () {
+                        favProvider.setFavorites(restaurantData).then((value) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Berhasil menghapus")),
+                          );
+                        });
+                      },
+                    )
+                  : IconButton(
+                      icon: const Icon(Icons.favorite_outline,
+                          size: 26.0, color: Colors.white),
+                      onPressed: () {
+                        favProvider.setFavorites(restaurantData).then((value) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text("Berhasil menyimpan")));
+                        });
+                      },
+                    );
+            case ResultState.error:
+              return const Icon(Icons.favorite_outline, color: Colors.black87);
+          }
+        },
+      ),
+    );
+  }
 }

@@ -5,7 +5,9 @@ import 'package:restaurant_flutter/provider/result_state.dart';
 import 'package:restaurant_flutter/widgets/card_restaurants.dart';
 
 class RestaurantListPage extends StatelessWidget {
-  const RestaurantListPage({Key? key}) : super(key: key);
+  final RestaurantProvider provider;
+
+  const RestaurantListPage({Key? key, required this.provider}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Consumer<RestaurantProvider>(
@@ -19,7 +21,7 @@ class RestaurantListPage extends StatelessWidget {
               itemCount: state.result.length,
               itemBuilder: (context, index) {
                 var restaurant = state.result[index];
-                return CardRestaurant(data: restaurant);
+                return CardRestaurant(data: restaurant, provider: provider);
               },
             );
           } else if (state.state == ResultState.noData) {
