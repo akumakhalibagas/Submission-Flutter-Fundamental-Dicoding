@@ -8,7 +8,12 @@ import 'package:restaurant_flutter/data/models/restaurant_search_result.dart';
 import 'package:restaurant_flutter/data/models/restaurants_result.dart';
 
 class ApiService {
-  static const String _baseUrl = "https://restaurant-api.dicoding.dev/";
+  ApiService({this.client}) {
+    client ??= http.Client();
+  }
+  http.Client? client;
+
+  static const String baseUrl = "https://restaurant-api.dicoding.dev/";
   static const String baseImageUrlSmall =
       "https://restaurant-api.dicoding.dev/images/small/";
   static const String baseImageUrlMedium =
@@ -17,7 +22,7 @@ class ApiService {
       "https://restaurant-api.dicoding.dev/images/large/";
 
   Future<RestaurantsResult> listRestaurants() async {
-    final response = await http.get(Uri.parse("${_baseUrl}list"));
+    final response = await client!.get(Uri.parse("${baseUrl}list"));
     debugPrint(response.statusCode.toString());
     if (response.statusCode == 200) {
       debugPrint(response.body.toString());
@@ -30,8 +35,8 @@ class ApiService {
 
   Future<RestaurantSearchResult> searchRestaurants(String query) async {
     final uri =
-        Uri.parse("${_baseUrl}search").replace(queryParameters: {'q': query});
-    final response = await http.get(uri);
+        Uri.parse("${baseUrl}search").replace(queryParameters: {'q': query});
+    final response = await client!.get(uri);
     debugPrint(response.statusCode.toString());
     if (response.statusCode == 200) {
       debugPrint(response.body.toString());
@@ -44,8 +49,8 @@ class ApiService {
 
   Future<RestaurantDetailsResult> detailsRestaurant(
       String idRestaurants) async {
-    final uri = Uri.parse("${_baseUrl}detail/$idRestaurants");
-    final response = await http.get(uri);
+    final uri = Uri.parse("${baseUrl}detail/$idRestaurants");
+    final response = await client!.get(uri);
     debugPrint(response.statusCode.toString());
     if (response.statusCode == 200) {
       debugPrint(response.body.toString());
@@ -58,13 +63,13 @@ class ApiService {
 
   Future<RestaurantReviewResult> reviewRestaurant(
       String id, String name, String review) async {
-    final uri = Uri.parse("${_baseUrl}review");
+    final uri = Uri.parse("${baseUrl}review");
     final Map<String, String> body = {
       "id": id,
       "name": name,
       "review": review,
     };
-    final response = await http.post(
+    final response = await client!.post(
       uri,
       headers: {"Content-Type": "application/json"},
       body: json.encode(body),

@@ -18,6 +18,7 @@ void main() {
     "city": "Medan",
     "rating": 4.2
   };
+
   test("Tes Json Parsing", () async {
     var result = Restaurant.fromJson(data);
 
