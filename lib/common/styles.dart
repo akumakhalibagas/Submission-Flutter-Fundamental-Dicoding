@@ -7,6 +7,8 @@ const Color colorSecondary = Color(0xFF8919FA);
 const colorBlack = Color(0xFF000000);
 const colorWhite = Color(0xFFF1F2F6);
 const colorGray = Color(0xFFAFAFAF);
+const colorGray2 = Color(0xFFD3D3D3);
+const colorBlackTransparent50 = Color(0x801F1F1F);
 const colorWhiteTransparent50 = Color(0x80F1F2F6);
 const colorTransparent = Color(0x00F1F2F6);
 

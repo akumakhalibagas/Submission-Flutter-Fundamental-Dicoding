@@ -9,6 +9,7 @@ import 'package:restaurant_flutter/provider/restaurant_details_provider.dart';
 import 'package:restaurant_flutter/provider/restaurant_provider.dart';
 import 'package:restaurant_flutter/provider/result_state.dart';
 import 'package:restaurant_flutter/utils/scroll_behavior.dart';
+import 'package:restaurant_flutter/widgets/bottom_sheet_review.dart';
 import 'package:restaurant_flutter/widgets/image_builder_utils.dart';
 
 import '../data/database/db_service.dart';
@@ -25,18 +26,28 @@ class RestaurantDetailPage extends StatefulWidget {
 }
 
 class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
-  var favProvider = RestaurantProvider(
+  late final RestaurantDetailsProvider _detailsProvider;
+
+  final _favProvider = RestaurantProvider(
     apiService: ApiService(),
     databaseService: DatabaseService(),
   );
+
+  @override
+  void initState() {
+    _detailsProvider = RestaurantDetailsProvider(
+      apiService: ApiService(),
+      idRestaurant: widget.restaurantId,
+    );
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ChangeNotifierProvider<RestaurantDetailsProvider>(
         create: (_) {
-          return RestaurantDetailsProvider(
-              apiService: ApiService(), idRestaurant: widget.restaurantId);
+          return _detailsProvider;
         },
         child: Consumer<RestaurantDetailsProvider>(
           builder: (context, state, _) {
@@ -80,7 +91,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                         Padding(
                           padding: const EdgeInsets.only(right: spacingSmaller),
                           child:
-                              _buildFavoriteIcon(restaurantData, favProvider),
+                              _buildFavoriteIcon(restaurantData, _favProvider),
                         ),
                       ],
                     ),
@@ -294,7 +305,18 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.reviews_outlined),
-        onPressed: () {},
+        onPressed: () {
+          showModalBottomSheet<void>(
+            context: context,
+            isScrollControlled: true,
+            shape: const RoundedRectangleBorder(borderRadius: radRegular),
+            builder: (BuildContext context) {
+              return BottomSheetReview(
+                id: widget.restaurantId,
+              );
+            },
+          );
+        },
       ),
     );
   }

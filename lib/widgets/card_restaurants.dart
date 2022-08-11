@@ -55,6 +55,7 @@ class CardRestaurant extends StatelessWidget {
           arguments: data.id,
         ).then((value) {
           provider.fetchRestaurantFavorites();
+          provider.fetchListRestaurants();
         }),
       ),
     );
